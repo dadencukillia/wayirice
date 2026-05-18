@@ -1,7 +1,7 @@
 GENERATOR=Ninja
 
 .PHONY: configure_core_debug configure_core_release build_core_debug build_core_release run_core core_debug core_release
-.DEFAULT_GOAL := core_debug
+.DEFAULT_GOAL := test_wl_ui_init
 
 export CC := clang
 export CXX := clang++
@@ -23,3 +23,6 @@ run_core:
 
 core_debug: configure_core_debug build_core_debug run_core
 core_release: configure_core_release build_core_release run_core
+
+test_wl_ui_init: configure_core_debug build_core_debug
+	./build/wl_ui_init/wl_ui_init_test
