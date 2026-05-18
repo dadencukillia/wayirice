@@ -3,6 +3,7 @@ find_package(PkgConfig REQUIRED)
 pkg_check_modules(WAYLAND REQUIRED 
   wayland-client 
   wayland-egl 
+  wayland-cursor
   egl
 )
 
