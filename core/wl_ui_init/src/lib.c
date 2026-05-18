@@ -3,10 +3,15 @@
  * SPDX-License-Identifier: Zlib license
  */
 
+#include <EGL/eglplatform.h>
 #include <string.h>
 #include <stdio.h>
 #include <stdint.h>
 #include <wayland-client.h>
+#include <wayland-egl-backend.h>
+#include <wayland-egl-core.h>
+#include <wayland-egl.h>
+#include <EGL/egl.h>
 #include "xdg-shell.h"
 
 #if defined(NDEBUG) || defined(NDEBUG_WL_UI_INIT)
@@ -119,6 +124,57 @@ void make_window(void) {
   };
   xdg_toplevel_add_listener(xdg_toplevel, &xdg_toplevel_listener, &state);
 
+  // EGL
+  EGLDisplay egl_display = eglGetDisplay((EGLNativeDisplayType) state.wl_display);
+
+  EGLint major, minor;
+  if (!eglInitialize(egl_display, &major, &minor)) {
+    DEBUG_LOG("failed to initialize EGL");
+    return;
+  }
+
+  if (!eglBindAPI(EGL_OPENGL_API)) {
+    DEBUG_LOG("failed to bind OpenGL API");
+    return;
+  }
+
+  const EGLint attrib_list[] = {
+    EGL_RENDERABLE_TYPE, EGL_OPENGL_BIT,
+    EGL_RED_SIZE, 8,
+    EGL_GREEN_SIZE, 8,
+    EGL_BLUE_SIZE, 8,
+    EGL_ALPHA_SIZE, 8,
+    EGL_DEPTH_SIZE, 24,
+    EGL_NONE
+  };
+
+  const EGLint context_attribs[] = {
+    EGL_CONTEXT_MAJOR_VERSION, 3,
+    EGL_CONTEXT_MINOR_VERSION, 3,
+    EGL_CONTEXT_OPENGL_PROFILE_MASK, EGL_CONTEXT_OPENGL_CORE_PROFILE_BIT,
+    EGL_NONE
+  };
+
+  EGLConfig egl_config;
+  EGLint num_configs;
+
+  if (!eglChooseConfig(egl_display, attrib_list, &egl_config, 1, &num_configs)) {
+    DEBUG_LOG("eglConfig creation error");
+    return;
+  }
+
+  if (num_configs == 0) {
+    DEBUG_LOG("RGBA parameters are not supported");
+    return;
+  }
+
+  struct wl_egl_window* wl_egl_window = wl_egl_window_create(surface, 400, 300);
+  EGLSurface egl_surface = eglCreateWindowSurface(egl_display, egl_config, (EGLNativeWindowType) wl_egl_window, NULL);
+  EGLContext egl_context = eglCreateContext(egl_display, egl_config, EGL_NO_CONTEXT, context_attribs);
+
+  eglMakeCurrent(egl_display, egl_surface, egl_surface, egl_context);
+  eglSwapBuffers(egl_display, egl_surface);
+
   wl_surface_commit(surface);
 
   // Surface loop
@@ -130,6 +186,7 @@ void make_window(void) {
 
   // Destructors
   DEBUG_LOG("destroying...");
+  wl_egl_window_destroy(wl_egl_window);
   xdg_toplevel_destroy(xdg_toplevel);
   xdg_surface_destroy(xdg_surface);
   wl_surface_destroy(surface);

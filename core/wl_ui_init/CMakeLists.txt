@@ -1,13 +1,9 @@
-find_path(
-  WAYLAND_CLIENT_INCLUDE_DIR
-  NAMES wayland-client.h
-  REQUIRED
-)
+find_package(PkgConfig REQUIRED)
 
-find_library(
-  WAYLAND_CLIENT_LIBRARY
-  NAMES wayland-client libwayland-client
-  REQUIRED
+pkg_check_modules(WAYLAND REQUIRED 
+  wayland-client 
+  wayland-egl 
+  egl
 )
 
 add_library(wl_ui_init 
@@ -17,8 +13,8 @@ add_library(wl_ui_init
 )
 target_include_directories(wl_ui_init PUBLIC ./include PRIVATE ./protocols)
 
-target_include_directories(wl_ui_init PRIVATE ${WAYLAND_CLIENT_INCLUDE_DIR})
-target_link_libraries(wl_ui_init ${WAYLAND_CLIENT_LIBRARY})
+target_include_directories(wl_ui_init PRIVATE ${WAYLAND_INCLUDE_DIRS})
+target_link_libraries(wl_ui_init PRIVATE ${WAYLAND_LIBRARIES})
 
 # Test demo
 
