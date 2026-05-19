@@ -5,7 +5,10 @@
 
 #include "lib.h"
 
+#include <bits/time.h>
+#include <time.h>
 #include <sys/poll.h>
+#include <unistd.h>
 #include <wayland-client-core.h>
 #include <wayland-client-protocol.h>
 #include <wayland-client.h>
@@ -81,20 +84,21 @@ WL_UI_RESULT app_init(wl_ui_application* app) {
   return WL_UI_OK;
 }
 
-void app_dispatch_events(wl_ui_application* app) {
+void app_wait_for_events(wl_ui_application* app, int timeout_ms) {
   struct wl_display* wl_display = app->wl_display;
 
   wl_display_flush(wl_display);
 
   if (wl_display_prepare_read(wl_display) < 0) {
     wl_display_dispatch_pending(wl_display);
+    usleep(0);
     return;
   }
 
   int fd_descriptor = wl_display_get_fd(wl_display);
 
   struct pollfd fd = { fd_descriptor, POLLIN, 0 };
-  int ready_sockets_amount = poll(&fd, 1, 0);
+  int ready_sockets_amount = poll(&fd, 1, timeout_ms);
 
   if (ready_sockets_amount > 0 && (fd.revents & POLLIN)) {
     wl_display_read_events(wl_display);

@@ -1,5 +1,4 @@
 #include "wl_ui_init.h"
-#include <unistd.h>
 
 int main(void) {
   wl_ui_application* app = create_app();
@@ -13,14 +12,12 @@ int main(void) {
   surface_show(surface);
 
   while (!surface_should_close(surface)) {
-    app_dispatch_events(app);
+    app_wait_for_events(app, 1'000 / 60);
 
     if (surface_can_update(surface)) {
       surface_activate(surface);
       surface_swap_buffers(surface);
     }
-
-    usleep(1'000'000 / 60);
   }
 
   destroy_surface(surface);

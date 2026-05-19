@@ -27,7 +27,7 @@ void surface_swap_buffers(wl_ui_surface* surface);
 
 wl_ui_application* create_app();
 WL_UI_RESULT app_init(wl_ui_application* app);
-void app_dispatch_events(wl_ui_application* app);
+void app_wait_for_events(wl_ui_application* app, int timeout_ms);
 void destroy_app(wl_ui_application* app);
 
 // surface.c
