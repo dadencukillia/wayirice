@@ -3,9 +3,9 @@
  * SPDX-License-Identifier: Zlib license
  */
 
-#include <stdio.h>
 #include "types.h"
-#include "wayland.h"
+#include "app.h"
+#include "surface.h"
 #include "egl.h"
 
 void make_window(void) {
@@ -24,7 +24,6 @@ void make_window(void) {
     app_dispatch_events(app);
 
     if (surface_can_update(surface)) {
-      printf("Update\n");
       surface_activate(surface);
       surface_swap_buffers(surface);
     }
