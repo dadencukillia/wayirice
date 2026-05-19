@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Zlib license
  */
 
-#include "egl.h"
+#include "lib.h"
 
 #include <EGL/egl.h>
 #include <wayland-egl-core.h>
@@ -11,7 +11,7 @@
 #include "macroses.h"
 #include "types.h"
 
-enum WL_UI_RESULT app_init_egl(struct wl_ui_application* app) {
+WL_UI_RESULT app_init_egl(wl_ui_application* app) {
   app->egl_states.inited = true;
 
   app->egl_states.display = eglGetDisplay((EGLNativeDisplayType) app->wl_display);
@@ -33,7 +33,7 @@ enum WL_UI_RESULT app_init_egl(struct wl_ui_application* app) {
   return WL_UI_OK;
 }
 
-enum WL_UI_RESULT surface_init_egl(struct wl_ui_surface *surface) {
+WL_UI_RESULT surface_init_egl(wl_ui_surface *surface) {
   surface->egl_states.inited = true;
 
   const EGLint attrib_list[] = {
@@ -75,10 +75,10 @@ enum WL_UI_RESULT surface_init_egl(struct wl_ui_surface *surface) {
   return WL_UI_OK;
 }
 
-void surface_activate(struct wl_ui_surface *surface) {
+void surface_activate(wl_ui_surface *surface) {
   eglMakeCurrent(surface->egl_states.egl_display, surface->egl_states.egl_surface, surface->egl_states.egl_surface, surface->egl_states.egl_context);
 }
 
-void surface_swap_buffers(struct wl_ui_surface* surface) {
+void surface_swap_buffers(wl_ui_surface* surface) {
   eglSwapBuffers(surface->egl_states.egl_display, surface->egl_states.egl_surface);
 }

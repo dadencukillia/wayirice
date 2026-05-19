@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Zlib license
  */
 
-#include "app.h"
+#include "lib.h"
 
 #include <sys/poll.h>
 #include <wayland-client-core.h>
@@ -19,8 +19,8 @@
 #include "macroses.h"
 #include "listeners.h"
 
-struct wl_ui_application* create_app() {
-  struct wl_ui_application* app = malloc(sizeof(struct wl_ui_application));
+wl_ui_application* create_app() {
+  wl_ui_application* app = malloc(sizeof(wl_ui_application));
 
   app->global_objects.wl_compositor = NULL;
   app->global_objects.xdg_wm_base = NULL;
@@ -35,7 +35,7 @@ struct wl_ui_application* create_app() {
   return app;
 }
 
-enum WL_UI_RESULT app_init(struct wl_ui_application* app) {
+WL_UI_RESULT app_init(wl_ui_application* app) {
   app->wl_display = wl_display_connect(NULL);
   if (!app->wl_display) {
     DEBUG_LOG("failed to connect a display");
@@ -81,7 +81,7 @@ enum WL_UI_RESULT app_init(struct wl_ui_application* app) {
   return WL_UI_OK;
 }
 
-void app_dispatch_events(struct wl_ui_application* app) {
+void app_dispatch_events(wl_ui_application* app) {
   struct wl_display* wl_display = app->wl_display;
 
   wl_display_flush(wl_display);
@@ -105,7 +105,7 @@ void app_dispatch_events(struct wl_ui_application* app) {
   wl_display_cancel_read(wl_display);
 }
 
-void destroy_app(struct wl_ui_application* app) {
+void destroy_app(wl_ui_application* app) {
   DEBUG_LOG("destroying application...");
 
   if (app->input_devices.wl_pointer) {

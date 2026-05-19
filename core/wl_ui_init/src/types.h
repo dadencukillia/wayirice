@@ -8,12 +8,6 @@
 
 #include "EGL/egl.h"
 
-enum WL_UI_RESULT : int {
-  WL_UI_OK,
-  WL_UI_ERR
-};
-
-
 // app
 
 struct wl_ui_global_objects {
