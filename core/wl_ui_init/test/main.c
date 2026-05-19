@@ -1,4 +1,5 @@
 #include "wl_ui_init.h"
+#include <stdio.h>
 
 int main(void) {
   wl_ui_application* app = create_app();
@@ -7,7 +8,7 @@ int main(void) {
 
   wl_ui_surface* surface = create_surface(app);
   surface_init(surface);
-  surface_role_window(surface);
+  surface_role_bar(surface);
   surface_init_egl(surface);
   surface_show(surface);
 

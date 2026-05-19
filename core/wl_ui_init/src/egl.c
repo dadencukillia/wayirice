@@ -30,10 +30,17 @@ WL_UI_RESULT app_init_egl(wl_ui_application* app) {
     return WL_UI_ERR;
   }
 
+
+  DEBUG_LOG("app egl inited");
   return WL_UI_OK;
 }
 
 WL_UI_RESULT surface_init_egl(wl_ui_surface *surface) {
+  surface->egl_states.init = true;
+  return WL_UI_OK;
+}
+
+WL_UI_RESULT _m_surface_init_egl(wl_ui_surface *surface, int width, int height) {
   surface->egl_states.inited = true;
 
   const EGLint attrib_list[] = {
@@ -68,10 +75,11 @@ WL_UI_RESULT surface_init_egl(wl_ui_surface *surface) {
     return WL_UI_ERR;
   }
 
-  surface->egl_states.wl_egl_window = wl_egl_window_create(surface->wl_surface, 1, 1);
+  surface->egl_states.wl_egl_window = wl_egl_window_create(surface->wl_surface, width, height);
   surface->egl_states.egl_surface = eglCreateWindowSurface(surface->egl_states.egl_display, egl_config, (EGLNativeWindowType) surface->egl_states.wl_egl_window, NULL);
   surface->egl_states.egl_context = eglCreateContext(surface->egl_states.egl_display, egl_config, EGL_NO_CONTEXT, context_attribs);
 
+  DEBUG_LOG("surface egl inited");
   return WL_UI_OK;
 }
 

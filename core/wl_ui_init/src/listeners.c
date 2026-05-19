@@ -9,8 +9,11 @@
 #include <wayland-client-protocol.h>
 #include <wayland-client.h>
 #include <wayland-cursor.h>
+#include <wayland-egl-core.h>
+#include "wlr-layer-shell-unstable-v1.h"
 #include "xdg-shell.h"
 
+#include "egl.h"
 #include "types.h"
 #include "macroses.h"
 
@@ -41,6 +44,10 @@ static void handle_wl_registry_listener_global(
     uint32_t supported_version = 1;
     app->global_objects.wl_shm = wl_registry_bind(registry, name, &wl_shm_interface, version < supported_version ? version : supported_version);
     DEBUG_LOG("wl_shm binded");
+  } else if (strcmp(interface, "zwlr_layer_shell_v1") == 0) {
+    uint32_t supported_version = 3;
+    app->global_objects.zwlr_layer_shell_v1 = wl_registry_bind(registry, name, &zwlr_layer_shell_v1_interface, version < supported_version ? version : supported_version);
+    DEBUG_LOG("zwlr_layer_shell_v1 binded");
   }
 }
 
@@ -136,6 +143,16 @@ static void handle_xdg_surface_configure(
   struct wl_ui_surface* surface = data;
 
   xdg_surface_ack_configure(xdg_surface, serial);
+
+  surface->info = surface->buf_info;
+  surface->frame_ready = true;
+
+  if (surface->egl_states.init && !surface->egl_states.inited) {
+    _m_surface_init_egl(surface, surface->info.width, surface->info.height);
+    wl_surface_commit(surface->wl_surface);
+  } else if (surface->egl_states.inited) {
+    wl_egl_window_resize(surface->egl_states.wl_egl_window, surface->info.width, surface->info.height, 0, 0);
+  }
 }
 
 const struct xdg_surface_listener listener_xdg_surface = {
@@ -156,10 +173,14 @@ static void handle_xdg_toplevel_close(
 static void handle_xdg_toplevel_configure(
   void* data,
   struct xdg_toplevel* xdg_toplevel,
-  int32_t,
-  int32_t,
-  struct wl_array *
+  int32_t width,
+  int32_t height,
+  struct wl_array*
 ) {
+  struct wl_ui_surface* surface = data;
+
+  surface->buf_info.width = width;
+  surface->buf_info.height = height;
 }
 
 const struct xdg_toplevel_listener listener_xdg_toplevel = {
@@ -184,3 +205,41 @@ static void handle_wl_callback_done(
 const struct wl_callback_listener listener_wl_callback = {
   .done = handle_wl_callback_done
 };
+
+// zwlr_layer_surface_v1
+
+static void handle_zwlr_layer_surface_v1_configure(
+  void* data,
+  struct zwlr_layer_surface_v1* zwlr_layer_surface_v1,
+  uint32_t serial, uint32_t width, uint32_t height
+) {
+  struct wl_ui_surface* surface = data;
+
+  zwlr_layer_surface_v1_ack_configure(zwlr_layer_surface_v1, serial);
+
+  surface->buf_info.width = width;
+  surface->buf_info.height = height;
+  surface->info = surface->buf_info;
+  surface->frame_ready = true;
+
+  if (surface->egl_states.init && !surface->egl_states.inited) {
+    _m_surface_init_egl(surface, surface->info.width, surface->info.height);
+    wl_surface_commit(surface->wl_surface);
+  } else if (surface->egl_states.inited) {
+    wl_egl_window_resize(surface->egl_states.wl_egl_window, width, height, 0, 0);
+  }
+}
+
+static void handle_zwlr_layer_surface_v1_closed(
+  void* data,
+  struct zwlr_layer_surface_v1* zwlr_layer_surface_v1
+) {
+  struct wl_ui_surface* surface = data;
+  surface->should_close = true;
+}
+
+const struct zwlr_layer_surface_v1_listener listener_zwlr_layer_surface_v1 = {
+  .configure = handle_zwlr_layer_surface_v1_configure,
+  .closed = handle_zwlr_layer_surface_v1_closed
+};
+

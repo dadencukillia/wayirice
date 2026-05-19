@@ -5,11 +5,11 @@
 
 #include "lib.h"
 
-#include <wayland-client-protocol.h>
 #include <wayland-client.h>
 #include <wayland-cursor.h>
 #include <wayland-egl.h>
 #include <stdlib.h>
+#include "wlr-layer-shell-unstable-v1.h"
 #include "xdg-shell.h"
 
 #include "types.h"
@@ -21,8 +21,10 @@ wl_ui_surface* create_surface(wl_ui_application* app) {
 
   surface->app = app;
   surface->should_close = false;
-  surface->frame_ready = true;
+  surface->frame_ready = false;
   surface->role_window.set = false;
+  surface->role_bar.set = false;
+  surface->egl_states.init = false;
   surface->egl_states.inited = false;
 
   return surface;
@@ -59,7 +61,32 @@ WL_UI_RESULT surface_role_window(wl_ui_surface* surface) {
   xdg_toplevel_add_listener(surface->role_window.xdg_toplevel, &listener_xdg_toplevel, surface);
 
   DEBUG_LOG("role to window");
+  return WL_UI_OK;
+}
 
+WL_UI_RESULT surface_role_bar(wl_ui_surface* surface) {
+  surface->role_bar.set = true;
+
+  surface->role_bar.zwlr_layer_surface_v1 = zwlr_layer_shell_v1_get_layer_surface(
+    surface->app->global_objects.zwlr_layer_shell_v1, 
+    surface->wl_surface,
+    NULL,
+    ZWLR_LAYER_SHELL_V1_LAYER_TOP,
+    "wayirice_bar"
+  );
+
+  zwlr_layer_surface_v1_set_anchor(surface->role_bar.zwlr_layer_surface_v1,
+    ZWLR_LAYER_SURFACE_V1_ANCHOR_TOP |
+    ZWLR_LAYER_SURFACE_V1_ANCHOR_LEFT |
+    ZWLR_LAYER_SURFACE_V1_ANCHOR_RIGHT
+  );
+
+  zwlr_layer_surface_v1_set_size(surface->role_bar.zwlr_layer_surface_v1, 0, 32);
+  zwlr_layer_surface_v1_set_exclusive_zone(surface->role_bar.zwlr_layer_surface_v1, 32);
+
+  zwlr_layer_surface_v1_add_listener(surface->role_bar.zwlr_layer_surface_v1, &listener_zwlr_layer_surface_v1, surface);
+
+  DEBUG_LOG("role to bar");
   return WL_UI_OK;
 }
 
@@ -95,6 +122,10 @@ void destroy_surface(wl_ui_surface* surface) {
   if (surface->role_window.set) {
     xdg_toplevel_destroy(surface->role_window.xdg_toplevel);
     xdg_surface_destroy(surface->role_window.xdg_surface);
+  }
+
+  if (surface->role_bar.set) {
+    zwlr_layer_surface_v1_destroy(surface->role_bar.zwlr_layer_surface_v1);
   }
 
   wl_surface_destroy(surface->wl_surface);

@@ -14,6 +14,7 @@ add_library(wl_ui_init
   ./src/macroses.c
   ./src/surface.c
 
+  ./protocols/wlr-layer-shell-unstable-v1.c
   ./protocols/xdg-shell.c
 )
 target_include_directories(wl_ui_init PUBLIC ./include PRIVATE ./protocols)

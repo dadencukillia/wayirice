@@ -15,6 +15,7 @@ struct wl_ui_global_objects {
   struct xdg_wm_base* xdg_wm_base;
   struct wl_seat* wl_seat;
   struct wl_shm* wl_shm;
+  struct zwlr_layer_shell_v1* zwlr_layer_shell_v1;
 };
 
 struct wl_ui_app_egl_states {
@@ -46,6 +47,7 @@ struct wl_ui_application {
 // surface
 
 struct wl_ui_surface_egl_states {
+  bool init;
   bool inited;
 
   EGLDisplay egl_display;
@@ -61,12 +63,25 @@ struct wl_ui_role_window {
   struct xdg_toplevel* xdg_toplevel;
 };
 
+struct wl_ui_role_bar {
+  bool set;
+
+  struct zwlr_layer_surface_v1* zwlr_layer_surface_v1;
+};
+
+struct wl_ui_surface_info {
+  int width, height;
+};
+
 struct wl_ui_surface {
   struct wl_ui_application* app;
   struct wl_surface* wl_surface;
   struct wl_ui_surface_egl_states egl_states;
+  struct wl_ui_surface_info info;
+  struct wl_ui_surface_info buf_info;
 
   struct wl_ui_role_window role_window;
+  struct wl_ui_role_bar role_bar;
 
   bool should_close;
   bool frame_ready;

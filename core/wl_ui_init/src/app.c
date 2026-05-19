@@ -5,10 +5,7 @@
 
 #include "lib.h"
 
-#include <bits/time.h>
-#include <time.h>
 #include <sys/poll.h>
-#include <unistd.h>
 #include <wayland-client-core.h>
 #include <wayland-client-protocol.h>
 #include <wayland-client.h>
@@ -16,6 +13,7 @@
 #include <wayland-egl.h>
 #include <stdlib.h>
 #include <poll.h>
+#include "wlr-layer-shell-unstable-v1.h"
 #include "xdg-shell.h"
 
 #include "types.h"
@@ -91,7 +89,6 @@ void app_wait_for_events(wl_ui_application* app, int timeout_ms) {
 
   if (wl_display_prepare_read(wl_display) < 0) {
     wl_display_dispatch_pending(wl_display);
-    usleep(0);
     return;
   }
 
@@ -123,6 +120,7 @@ void destroy_app(wl_ui_application* app) {
   }
 
   xdg_wm_base_destroy(app->global_objects.xdg_wm_base);
+  zwlr_layer_shell_v1_destroy(app->global_objects.zwlr_layer_shell_v1);
   wl_seat_destroy(app->global_objects.wl_seat);
   wl_shm_destroy(app->global_objects.wl_shm);
   wl_compositor_destroy(app->global_objects.wl_compositor);
