@@ -8,7 +8,11 @@ pkg_check_modules(WAYLAND REQUIRED
 )
 
 add_library(wl_ui_init 
+  ./src/egl.c
   ./src/lib.c
+  ./src/listeners.c
+  ./src/macroses.c
+  ./src/wayland.c
 
   ./protocols/xdg-shell.c
 )

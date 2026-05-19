@@ -1,5 +1,5 @@
-#ifndef WL_UI_INIT_LIB_H
-#define WL_UI_INIT_LIB_H
+#ifndef WL_UI_INIT_INCLUDE_LIB_H
+#define WL_UI_INIT_INCLUDE_LIB_H
 
 #include "../src/lib.h"
 

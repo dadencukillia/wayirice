@@ -3,9 +3,6 @@
  * SPDX-License-Identifier: Zlib license
  */
 
-#ifndef WL_UI_INIT_LIB_H
-#define WL_UI_INIT_LIB_H
+#include "macroses.h"
 
-void make_window(void);
-
-#endif
+void empty_function() {}
