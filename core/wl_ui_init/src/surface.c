@@ -28,7 +28,7 @@ struct wl_ui_surface* create_surface(struct wl_ui_application* app) {
   return surface;
 }
 
-WL_UI_RESULT surface_init(struct wl_ui_surface* surface) {
+enum WL_UI_RESULT surface_init(struct wl_ui_surface* surface) {
   surface->wl_surface = wl_compositor_create_surface(surface->app->global_objects.wl_compositor);
   if (!surface->wl_surface) {
     DEBUG_LOG("failed to create a surface");
@@ -39,7 +39,7 @@ WL_UI_RESULT surface_init(struct wl_ui_surface* surface) {
   return WL_UI_OK;
 }
 
-WL_UI_RESULT surface_role_window(struct wl_ui_surface* surface) {
+enum WL_UI_RESULT surface_role_window(struct wl_ui_surface* surface) {
   surface->role_window.set = true;
 
   surface->role_window.xdg_surface = xdg_wm_base_get_xdg_surface(surface->app->global_objects.xdg_wm_base, surface->wl_surface);

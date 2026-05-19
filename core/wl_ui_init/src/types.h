@@ -8,10 +8,11 @@
 
 #include "EGL/egl.h"
 
-typedef unsigned char WL_UI_RESULT;
+enum WL_UI_RESULT : int {
+  WL_UI_OK,
+  WL_UI_ERR
+};
 
-#define WL_UI_OK (WL_UI_RESULT) 0
-#define WL_UI_ERR (WL_UI_RESULT) 1
 
 // app
 

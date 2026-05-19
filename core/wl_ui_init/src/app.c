@@ -35,7 +35,7 @@ struct wl_ui_application* create_app() {
   return app;
 }
 
-WL_UI_RESULT app_init(struct wl_ui_application* app) {
+enum WL_UI_RESULT app_init(struct wl_ui_application* app) {
   app->wl_display = wl_display_connect(NULL);
   if (!app->wl_display) {
     DEBUG_LOG("failed to connect a display");

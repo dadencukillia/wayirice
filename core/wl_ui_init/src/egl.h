@@ -8,8 +8,8 @@
 
 #include "types.h"
 
-WL_UI_RESULT app_init_egl(struct wl_ui_application* app);
-WL_UI_RESULT surface_init_egl(struct wl_ui_surface* surface);
+enum WL_UI_RESULT app_init_egl(struct wl_ui_application* app);
+enum WL_UI_RESULT surface_init_egl(struct wl_ui_surface* surface);
 void surface_activate(struct wl_ui_surface* surface);
 void surface_swap_buffers(struct wl_ui_surface* surface);
 

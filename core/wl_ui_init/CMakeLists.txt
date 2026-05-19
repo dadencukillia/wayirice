@@ -10,7 +10,6 @@ pkg_check_modules(WAYLAND REQUIRED
 add_library(wl_ui_init 
   ./src/app.c
   ./src/egl.c
-  ./src/lib.c
   ./src/listeners.c
   ./src/macroses.c
   ./src/surface.c

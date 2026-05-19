@@ -11,7 +11,7 @@
 #include "macroses.h"
 #include "types.h"
 
-WL_UI_RESULT app_init_egl(struct wl_ui_application* app) {
+enum WL_UI_RESULT app_init_egl(struct wl_ui_application* app) {
   app->egl_states.inited = true;
 
   app->egl_states.display = eglGetDisplay((EGLNativeDisplayType) app->wl_display);
@@ -33,7 +33,7 @@ WL_UI_RESULT app_init_egl(struct wl_ui_application* app) {
   return WL_UI_OK;
 }
 
-WL_UI_RESULT surface_init_egl(struct wl_ui_surface *surface) {
+enum WL_UI_RESULT surface_init_egl(struct wl_ui_surface *surface) {
   surface->egl_states.inited = true;
 
   const EGLint attrib_list[] = {
