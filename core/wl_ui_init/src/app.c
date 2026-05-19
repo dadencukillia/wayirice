@@ -5,11 +5,14 @@
 
 #include "app.h"
 
+#include <sys/poll.h>
+#include <wayland-client-core.h>
 #include <wayland-client-protocol.h>
 #include <wayland-client.h>
 #include <wayland-cursor.h>
 #include <wayland-egl.h>
 #include <stdlib.h>
+#include <poll.h>
 #include "xdg-shell.h"
 
 #include "types.h"
@@ -79,7 +82,27 @@ WL_UI_RESULT app_init(struct wl_ui_application* app) {
 }
 
 void app_dispatch_events(struct wl_ui_application* app) {
-  wl_display_dispatch(app->wl_display);
+  struct wl_display* wl_display = app->wl_display;
+
+  wl_display_flush(wl_display);
+
+  if (wl_display_prepare_read(wl_display) < 0) {
+    wl_display_dispatch_pending(wl_display);
+    return;
+  }
+
+  int fd_descriptor = wl_display_get_fd(wl_display);
+
+  struct pollfd fd = { fd_descriptor, POLLIN, 0 };
+  int ready_sockets_amount = poll(&fd, 1, 0);
+
+  if (ready_sockets_amount > 0 && (fd.revents & POLLIN)) {
+    wl_display_read_events(wl_display);
+    wl_display_dispatch_pending(wl_display);
+    return;
+  }
+
+  wl_display_cancel_read(wl_display);
 }
 
 void destroy_app(struct wl_ui_application* app) {
