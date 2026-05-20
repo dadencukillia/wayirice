@@ -18,8 +18,6 @@ typedef unsigned char WL_UI_BOOL;
 
 // egl.c
 
-WL_UI_RESULT app_init_egl(wl_ui_application* app);
-WL_UI_RESULT surface_init_egl(wl_ui_surface* surface);
 void surface_activate(wl_ui_surface* surface);
 void surface_swap_buffers(wl_ui_surface* surface);
 

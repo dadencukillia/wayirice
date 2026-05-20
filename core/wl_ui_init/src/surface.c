@@ -24,7 +24,6 @@ wl_ui_surface* create_surface(wl_ui_application* app) {
   surface->frame_ready = false;
   surface->role_window.set = false;
   surface->role_bar.set = false;
-  surface->egl_states.init = false;
   surface->egl_states.inited = false;
 
   return surface;

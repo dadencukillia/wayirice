@@ -12,8 +12,6 @@
 #include "types.h"
 
 WL_UI_RESULT app_init_egl(wl_ui_application* app) {
-  app->egl_states.inited = true;
-
   app->egl_states.display = eglGetDisplay((EGLNativeDisplayType) app->wl_display);
   if (!app->egl_states.display) {
     DEBUG_LOG("failed to get EGL display");
@@ -35,14 +33,7 @@ WL_UI_RESULT app_init_egl(wl_ui_application* app) {
   return WL_UI_OK;
 }
 
-WL_UI_RESULT surface_init_egl(wl_ui_surface *surface) {
-  surface->egl_states.init = true;
-  return WL_UI_OK;
-}
-
-WL_UI_RESULT _m_surface_init_egl(wl_ui_surface *surface, int width, int height) {
-  surface->egl_states.inited = true;
-
+WL_UI_RESULT surface_init_egl(wl_ui_surface *surface, int width, int height) {
   const EGLint attrib_list[] = {
     EGL_RENDERABLE_TYPE, EGL_OPENGL_BIT,
     EGL_RED_SIZE, 8,
@@ -80,6 +71,19 @@ WL_UI_RESULT _m_surface_init_egl(wl_ui_surface *surface, int width, int height) 
   surface->egl_states.egl_context = eglCreateContext(surface->egl_states.egl_display, egl_config, EGL_NO_CONTEXT, context_attribs);
 
   DEBUG_LOG("surface egl inited");
+  return WL_UI_OK;
+}
+
+WL_UI_RESULT surface_configure_egl(wl_ui_surface *surface) {
+  if (surface->egl_states.inited) {
+    wl_egl_window_resize(surface->egl_states.wl_egl_window, surface->info.width, surface->info.height, 0, 0);
+  } else {
+    if (surface_init_egl(surface, surface->info.width, surface->info.height) == WL_UI_ERR) {
+      return WL_UI_ERR;
+    }
+    surface->egl_states.inited = true;
+  }
+
   return WL_UI_OK;
 }
 

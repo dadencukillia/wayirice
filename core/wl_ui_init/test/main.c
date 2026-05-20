@@ -3,12 +3,10 @@
 int main(void) {
   wl_ui_application* app = create_app();
   app_init(app);
-  app_init_egl(app);
 
   wl_ui_surface* surface = create_surface(app);
   surface_init(surface);
-  surface_role_bar(surface);
-  surface_init_egl(surface);
+  surface_role_window(surface);
   surface_apply(surface);
 
   while (!surface_should_close(surface)) {

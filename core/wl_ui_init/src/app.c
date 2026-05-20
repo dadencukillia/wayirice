@@ -15,6 +15,7 @@
 #include "xdg-shell.h"
 
 #include "types.h"
+#include "egl.h"
 #include "macroses.h"
 #include "listeners.h"
 
@@ -28,8 +29,6 @@ wl_ui_application* create_app() {
 
   app->input_devices.wl_pointer = NULL;
   app->input_devices.wl_keyboard = NULL;
-
-  app->egl_states.inited = false;
 
   return app;
 }
@@ -77,6 +76,9 @@ WL_UI_RESULT app_init(wl_ui_application* app) {
 
   // Listeners
   xdg_wm_base_add_listener(app->global_objects.xdg_wm_base, &listener_xdg_wm_base, app);
+
+  // EGL
+  app_init_egl(app);
 
   return WL_UI_OK;
 }

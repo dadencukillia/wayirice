@@ -8,6 +8,8 @@
 
 #include "lib.h"
 
-WL_UI_RESULT _m_surface_init_egl(wl_ui_surface *surface, int width, int height);
+WL_UI_RESULT app_init_egl(wl_ui_application* app);
+WL_UI_RESULT surface_init_egl(wl_ui_surface *surface, int width, int height);
+WL_UI_RESULT surface_configure_egl(wl_ui_surface *surface);
 
 #endif

@@ -7,6 +7,7 @@
 #define WL_UI_INIT_TYPES_H
 
 #include "EGL/egl.h"
+#include "lib.h"
 
 // app
 
@@ -19,8 +20,6 @@ struct wl_ui_global_objects {
 };
 
 struct wl_ui_app_egl_states {
-  bool inited;
-
   EGLint major;
   EGLint minor;
 
@@ -47,8 +46,7 @@ struct wl_ui_application {
 // surface
 
 struct wl_ui_surface_egl_states {
-  bool init;
-  bool inited;
+  WL_UI_BOOL inited;
 
   EGLDisplay egl_display;
   EGLSurface egl_surface;
@@ -57,14 +55,14 @@ struct wl_ui_surface_egl_states {
 };
 
 struct wl_ui_role_window {
-  bool set;
+  WL_UI_BOOL set;
 
   struct xdg_surface* xdg_surface;
   struct xdg_toplevel* xdg_toplevel;
 };
 
 struct wl_ui_role_bar {
-  bool set;
+  WL_UI_BOOL set;
 
   struct zwlr_layer_surface_v1* zwlr_layer_surface_v1;
 };

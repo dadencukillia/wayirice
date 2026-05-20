@@ -146,12 +146,8 @@ static void handle_xdg_surface_configure(
   surface->info = surface->buf_info;
   surface->frame_ready = true;
 
-  if (surface->egl_states.init && !surface->egl_states.inited) {
-    _m_surface_init_egl(surface, surface->info.width, surface->info.height);
-    wl_surface_commit(surface->wl_surface);
-  } else if (surface->egl_states.inited) {
-    wl_egl_window_resize(surface->egl_states.wl_egl_window, surface->info.width, surface->info.height, 0, 0);
-  }
+  surface_configure_egl(surface);
+  wl_surface_commit(surface->wl_surface);
 }
 
 const struct xdg_surface_listener listener_xdg_surface = {
@@ -178,8 +174,8 @@ static void handle_xdg_toplevel_configure(
 ) {
   struct wl_ui_surface* surface = data;
 
-  surface->buf_info.width = width;
-  surface->buf_info.height = height;
+  if (width > 0) surface->buf_info.width = width;
+  if (height > 0) surface->buf_info.height = height;
 }
 
 const struct xdg_toplevel_listener listener_xdg_toplevel = {
@@ -216,17 +212,13 @@ static void handle_zwlr_layer_surface_v1_configure(
 
   zwlr_layer_surface_v1_ack_configure(zwlr_layer_surface_v1, serial);
 
-  surface->buf_info.width = width;
-  surface->buf_info.height = height;
+  if (width > 0) surface->buf_info.width = width;
+  if (height > 0) surface->buf_info.height = height;
   surface->info = surface->buf_info;
   surface->frame_ready = true;
 
-  if (surface->egl_states.init && !surface->egl_states.inited) {
-    _m_surface_init_egl(surface, surface->info.width, surface->info.height);
-    wl_surface_commit(surface->wl_surface);
-  } else if (surface->egl_states.inited) {
-    wl_egl_window_resize(surface->egl_states.wl_egl_window, width, height, 0, 0);
-  }
+  surface_configure_egl(surface);
+  wl_surface_commit(surface->wl_surface);
 }
 
 static void handle_zwlr_layer_surface_v1_closed(
