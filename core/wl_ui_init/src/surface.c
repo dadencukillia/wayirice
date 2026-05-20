@@ -80,7 +80,6 @@ WL_UI_RESULT surface_role_bar(wl_ui_surface* surface) {
     ZWLR_LAYER_SURFACE_V1_ANCHOR_LEFT |
     ZWLR_LAYER_SURFACE_V1_ANCHOR_RIGHT
   );
-
   zwlr_layer_surface_v1_set_size(surface->role_bar.zwlr_layer_surface_v1, 0, 32);
   zwlr_layer_surface_v1_set_exclusive_zone(surface->role_bar.zwlr_layer_surface_v1, 32);
 
@@ -90,7 +89,7 @@ WL_UI_RESULT surface_role_bar(wl_ui_surface* surface) {
   return WL_UI_OK;
 }
 
-void surface_show(wl_ui_surface* surface) {
+void surface_apply(wl_ui_surface* surface) {
   wl_surface_commit(surface->wl_surface);
 }
 

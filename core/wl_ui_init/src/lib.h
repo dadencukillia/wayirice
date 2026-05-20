@@ -36,7 +36,7 @@ wl_ui_surface* create_surface(wl_ui_application* app);
 WL_UI_RESULT surface_init(wl_ui_surface* surface);
 WL_UI_RESULT surface_role_window(wl_ui_surface* surface);
 WL_UI_RESULT surface_role_bar(wl_ui_surface* surface);
-void surface_show(wl_ui_surface* surface);
+void surface_apply(wl_ui_surface* surface);
 WL_UI_BOOL surface_can_update(wl_ui_surface* surface);
 void destroy_surface(wl_ui_surface* surface);
 WL_UI_BOOL surface_should_close(wl_ui_surface* surface);

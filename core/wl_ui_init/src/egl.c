@@ -6,7 +6,7 @@
 #include "lib.h"
 
 #include <EGL/egl.h>
-#include <wayland-egl-core.h>
+#include <wayland-egl.h>
 
 #include "macroses.h"
 #include "types.h"

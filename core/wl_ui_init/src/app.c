@@ -6,8 +6,6 @@
 #include "lib.h"
 
 #include <sys/poll.h>
-#include <wayland-client-core.h>
-#include <wayland-client-protocol.h>
 #include <wayland-client.h>
 #include <wayland-cursor.h>
 #include <wayland-egl.h>
@@ -57,7 +55,8 @@ WL_UI_RESULT app_init(wl_ui_application* app) {
     app->global_objects.wl_compositor == NULL ||
     app->global_objects.xdg_wm_base == NULL ||
     app->global_objects.wl_seat == NULL ||
-    app->global_objects.wl_shm == NULL
+    app->global_objects.wl_shm == NULL ||
+    app->global_objects.zwlr_layer_shell_v1 == NULL
   ) {
     DEBUG_LOG("missing a global object");
     return WL_UI_ERR;
